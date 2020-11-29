@@ -25,10 +25,29 @@ app.get('/api/courses/:id', (req, res) => {
   if(!course){
     res.status(404).send('The course with the given ID was not found')
     console.log('after res send when not found') //executes after res.send() also, if dont want then use return;
+    return;
   }
   console.log(course) //undefined
   res.send(course);
 })
+
+app.delete('/api/courses/:id', (req, res) => {
+  // Lookup for the course
+  // Not existing, return 404
+  const course = coursesArr.find( c => c.id === parseInt(req.params.id))
+  if(!course){
+    res.status(404).send('The course with given ID is not found.')
+    return;
+  }
+  // If exist then delete
+  const index = coursesArr.indexOf(course)
+  coursesArr.splice(index, 1);
+
+  // Return the deleted Course
+  res.send(course);
+
+})
+
 
 app.post('/api/courses', (req, res) => {
   // if(!req.body.name || req.body.name.length < 3){
