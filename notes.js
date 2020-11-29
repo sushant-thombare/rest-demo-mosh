@@ -43,7 +43,7 @@ app.listen(port, () => console.log(`Listening on port ${port}...`))
 app.get('/api/courses/:id', (req, res) => {
   const course = coursesArr.find(c => c.id === parseInt(req.params.id))
   if(!course)
-    res.status(404).send('The course wi th the given ID was not found')
+    res.status(404).send('The course with the given ID was not found')
   res.send(course);
 })
 //Output: {"id":"1" , "name":"course1"}
@@ -56,3 +56,49 @@ When it comes to get values from request body using req.body.name we need to do 
 i.e. app.use(express.json());
 
 // Adding a piece of middleware, So when we call express.json() this method returns piece of middleware then we call app.use() to use that middleware in request pipeline
+
+
+
+Working with Joi Validation
+
+const Joi = require('joi');
+// J in Joi should be capital since require('joi') returns class and express its standard rule to give name of class with first letter Capital
+
+const schema = {
+  name: Joi.string().min(3).required()
+}
+const result = Joi.validate(req.body, schema)
+console.log(result);
+
+// if validation success, i.e. result.error = null
+// console.log(result)
+{
+  error: null,
+  value: { name: 'sushants' },
+  then: [Function: then],
+  catch: [Function: catch]
+}
+// if validation fails, i.e. result.error = [Object]
+// console.log(result.error)
+{
+    "isJoi": true,
+    "name": "ValidationError",
+    "details": [
+        {
+            "message": "\"name\" length must be at least 3 characters long",
+            "path": [
+                "name"
+            ],
+            "type": "string.min",
+            "context": {
+                "limit": 3,
+                "value": "as",
+                "key": "name",
+                "label": "name"
+            }
+        }
+    ],
+    "_object": {
+        "name": "as"
+    }
+}
