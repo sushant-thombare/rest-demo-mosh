@@ -4,7 +4,7 @@ const app = express()
 
 app.use(express.json())
 
-// Adding a piece of middleware, So when we call express.json() this method returns piece of middleware then we call app.use() to use that middleware in request pipeline
+// Adding a piece of middleware, So when we call express.json() this method returns piece of middleware then we call app.use() to use that middleware in request pipeline, So whenever request comes then it executes the middleware before handling request
 
 const coursesArr = [
     { id : 1, name: 'course1'},
@@ -32,17 +32,18 @@ app.get('/api/courses/:id', (req, res) => {
 
 app.post('/api/courses', (req, res) => {
   // if(!req.body.name || req.body.name.length < 3){
-  //   // 400 Bad request
-  //   res.status(400).send('Name is required and should be maximum 3 characters.')
-  //   return;
+  // 400 Bad request
+  // res.status(400).send('Name is required and should be maximum 3 characters.')
+  // return;
   // }
   const schema = {
     name: Joi.string().min(3).required()
   }
   const result = Joi.validate(req.body, schema)
   console.log(result)
+  // const { error } = validateCourseDetails(req.body)
   if(result.error){
-    res.status(400).send(result.error)
+    res.status(400).send(result.error.details[0].message)
     return
   }
   const course = {
@@ -65,9 +66,11 @@ app.put('/api/courses/:id', (req, res) => {
 
   // validate
   // If invalid, return 400 - Bad request
-  const result = validateCourseDetails(req.body)
-  if(result.error){
-    res.status(400).send(result.error.details[0].message)
+  const { error } = validateCourseDetails(req.body)
+  // const result = validateCourseDetails(req.body)
+  // result.error
+  if(error){
+    res.status(400).send(error.details[0].message)
     return
   }
 
@@ -86,8 +89,8 @@ function validateCourseDetails(courseData){
 }
 
 // PORT
-// A proper way to pass a port to our Node Application.
-// We should attempt to read the value of environment vaariable called PORT.
+// A proper way to pass a port number to our Node Application.
+// We should attempt to read the value of environment variable called PORT.
 // If there is a value then we should use that otherwise use arbitrary port like 3000
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`))

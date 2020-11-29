@@ -55,7 +55,7 @@ When it comes to get values from request body using req.body.name we need to do 
 
 i.e. app.use(express.json());
 
-// Adding a piece of middleware, So when we call express.json() this method returns piece of middleware then we call app.use() to use that middleware in request pipeline
+// Adding a piece of middleware, So when we call express.json() this method returns piece of middleware then we call app.use() to use that middleware in request pipeline, So whenever request comes then it executes the middleware before handling request
 
 
 
@@ -65,10 +65,17 @@ const Joi = require('joi');
 // J in Joi should be capital since require('joi') returns class and express its standard rule to give name of class with first letter Capital
 
 const schema = {
-  name: Joi.string().min(3).required()
+  name: Joi.string().min(3).required(),
+  username: Joi.string().alphanum().min(3).max(30).required(),
+  birth_year: Joi.number().integer().min(1900).max(2013),
+  mobile: Joi.number().integer().min(10).max(10);
 }
 const result = Joi.validate(req.body, schema)
 console.log(result);
+if(result.error){
+  console.log("Entered data is invalid !")
+}
+
 
 // if validation success, i.e. result.error = null
 // console.log(result)
